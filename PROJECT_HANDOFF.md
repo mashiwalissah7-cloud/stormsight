@@ -1,0 +1,128 @@
+# StormSight project handoff
+
+Updated October 27, 2026, America/New_York. Update this file after each major task and include it in meaningful Git commits. It records actual state, not completion claims.
+
+## Goal and hackathon requirements
+
+Build StormSight for Mashiwal Issah's solo Nebius x NVIDIA Global AI Hackathon entry. Deadline shown in Devpost: October 30, 2026 at 1 PM EDT. Track: Best Apps and Agents. Required: working NVIDIA Nemotron inference on Nebius Token Factory, public code with MIT license and setup README, accessible demo, project description, public YouTube demonstration under three minutes, honest feedback on tools used. Verify final rules: https://nebiusglobalaihackathon.devpost.com/rules
+
+Use Python and Streamlit with NOAA historical hurricane tracks, OpenFEMA NFIP claims, Census county geography, and FEMA NRI context. Evaluate county claims/payment estimates on unseen storms. Optional Tavily source lookup and a bounded Nemotron agent explain Python evidence. Never invent data, metrics, model IDs, API URLs, or successful integrations.
+
+The user now wants autonomous development until human input is truly needed. Do not pause after every small step. Use GitHub Desktop for version control, not command line Git. README, Devpost, and video text should be plain professional English without contractions or dash punctuation. Do not restart the project. Preserve completed downloads.
+
+## Location and runtime
+
+Repository: /Users/ovabilli/Documents/GitHub/stormsight
+GitHub user: mashiwalissah7-cloud
+Branch: main. Local only at this update. Known commits: af475b9 Initial commit; 958e027 Add initial StormSight interface.
+Python 3.14.6, virtual environment .venv. VS Code has this folder open.
+Local app: http://127.0.0.1:8501/ ; original server exec session 60887.
+The earlier ProofPlan site is abandoned and unrelated. Do not resume it.
+
+## Completed and working
+
+1. Repository created using GitHub Desktop, with MIT license and Python ignore rules. Initial interface committed.
+2. NOAA file hurdat2-1851-2025-092326.txt downloaded unchanged and parsed: 55,524 observations, 1,988 storms. Helene and Milton maps and values verified in browser.
+3. Census 2025 county file downloaded: 3,222 rows. County internal points drive the corridor calculation.
+4. Official FEMA NRI owner FEMA_NationalRiskIndex verified, version December 2025 1.20.0. All 3,232 rows downloaded and checked against API count. NRI is context only, excluded from model predictors.
+5. Geographic distance, hourly interpolation, nearby duration, ambiguity aware claim matching, and strict portfolio CSV handling implemented.
+6. Redesigned Streamlit app has historical track map, county corridor, portfolio sample/upload, source ledger, optional API controls, and validation views that activate when artifacts exist.
+7. Optional Nemotron JSON plan/execute agent implemented with a tool allowlist and numerical prose checks. Python renders numerical tables. Optional aggregate portfolio sharing requires a UI opt in. No live Nebius call has been tested.
+8. Tavily adapter restricts returned URLs to official domains. No live Tavily call has been tested.
+9. Latest test run: 23 passed. Covers parsing, coordinates, time units, date line interpolation, ambiguous matches, upload validation, agent checks, and invariance when final test targets are changed. Streamlit AppTest passed before model artifacts existed.
+10. Source manifests, setup guide, architecture, and demo script drafted. CI workflow created but not run on GitHub.
+
+## Currently being worked on
+
+Claims ingestion and the corrected benchmark are complete. Current work: final artifact checks, README with actual results, browser review, and Git checkpoints through GitHub Desktop.
+
+All 16 downloads completed after reducing the page size to 2,000. Raw and partial caches remain for reproducibility. No download is currently blocked.
+
+## Unfinished
+
+1. Final scientific and UI review of the completed artifacts. study_counties.csv, claims_audit.json, and claims_manifest.json now exist.
+2. model.joblib, validation.json, test_predictions.csv, and test_storm_totals.csv now exist. Document their limitations and final figures, not the discarded preliminary complete case benchmark.
+3. Final tests and browser review with model artifacts, README with actual results, Devpost draft, and Git checkpoint.
+4. Public GitHub publication and Streamlit Cloud deployment.
+5. Nebius account activation, credits, exact NVIDIA model ID and endpoint, private API key, and a successful live call. User is unsure whether activated. Builder Program application was pending review; Token Factory had reached billing. Do not enter payment details or ask for keys in chat.
+6. Tavily account/key and live verification.
+7. Public YouTube demo and final Devpost submission. Devpost draft exists, not submitted.
+8. Calibrated property/portfolio loss prediction is not implemented. Portfolio reports value in the corridor only. Do not invent damage ratios.
+
+## Important files
+
+app.py: interface, maps, source evidence, portfolio and validation views.
+src/stormsight/data.py: NOAA parser and exact source URL.
+src/stormsight/features.py: haversine, hourly interpolation, county features, claim matching.
+src/stormsight/model.py: fixed splits, mean baseline, Poisson gradient boosting, residual intervals, metrics.
+src/stormsight/portfolio.py: strict CSV parsing and corridor value calculation.
+src/stormsight/agent.py: optional Nebius planner, bounded tools, schema and numerical checks.
+src/stormsight/news.py: optional official source lookup through Tavily.
+scripts/fetch_sources.py: reproducible NOAA, Census, NRI downloads and manifests.
+scripts/build_dataset.py: bounded FEMA columns/date windows, ID pagination, two download workers, aggregation.
+analysis/validation.py: train and export actual benchmark.
+tests/: pytest suite, including unittest compatible parser tests.
+data/raw/: original sources and ignored raw claim caches.
+data/processed/: county tables, source manifest, all county windows, future benchmark artifacts.
+work/: ignored logs, temporary API metadata, partial downloads. Preserve for resume.
+docs/SETUP.md, ARCHITECTURE.md, DEMO_SCRIPT.md: drafts.
+.env.example: empty secrets template. Never commit .env or .streamlit/secrets.toml.
+.streamlit/config.toml: theme and upload size.
+.github/workflows/tests.yml: Python 3.14 tests.
+requirements.txt: pinned installed direct dependencies.
+
+## Dependencies and commands
+
+Direct dependencies: streamlit 1.66.1, pandas 3.1.0, numpy 2.5.4, pydeck 0.9.3, scikit-learn 1.9.1, pytest 9.1.1, python-dotenv 1.2.4, openai 3.39.0, tavily-python 0.8.5, requests 2.34.2, joblib 1.6.0.
+
+From the repository root:
+
+```sh
+.venv/bin/python -m streamlit run app.py --server.address 127.0.0.1 --server.port 8501 --server.headless true --browser.gatherUsageStats false
+.venv/bin/python -m pytest -q
+.venv/bin/python -m scripts.fetch_sources
+.venv/bin/python -u -m scripts.build_dataset
+.venv/bin/python -m analysis.validation
+.venv/bin/python -m pip check
+```
+
+Use GitHub Desktop for commits. Do not use Git CLI.
+
+## Scientific boundaries
+
+Targets are matched NFIP claim records and gross building, contents, and increased cost of compliance payments, not total hurricane damage. Match county internal points within 250 km of the interpolated observed track, then dates from first proximity through three days after last proximity. Exclude ambiguous matches and affected county targets. The payment target sums available reported components and retains signed adjustments. Missing components are counted explicitly. Entirely missing targets and negative county sums are excluded. It is not complete or ultimate loss.
+
+Train: Irene 2011, Isaac/Sandy 2012, Matthew 2016, Harvey/Irma 2017, Florence/Michael 2018.
+Calibration: Dorian 2019, Laura/Sally 2020.
+Final test: Ida 2021, Ian 2022, Idalia 2023, Helene/Milton 2024.
+
+No rainfall, surge, coastal classification, or historical policy denominator. Current NRI is context only. 2025 geography is used retrospectively. Full observed tracks make this a retrospective benchmark, not forecast validation. Features: distance, nearby wind, duration, log land area, water fraction, latitude, longitude. Ranges use calibration residuals and have no guaranteed coverage.
+
+## Errors and issues
+
+FimaNfipClaims v2 returned 404. FEMA DataSets metadata verifies the replacement https://www.fema.gov/api/open/v3/NfipClaims . Do not use the obsolete endpoint.
+FEMA intermittently returns 503. Downloader retries and resumes with ID cursors. Complete caches: data/raw/claims-STORM.json; partial caches: work/download-STORM.json. Counts and unique IDs are checked. Helene completed successfully with smaller pages.
+A pandas datetime unit bug in duration was fixed and tested before training. A harmless joblib physical CPU detection warning falls back to logical cores.
+Live APIs, cloud compatibility, hosting, and final submission remain unverified. Final UI review with model artifacts is pending.
+
+## Exact next steps for another assistant
+
+1. Audit process 89220 completed successfully: 23 tests passed. Inspect work/validation-run.log if details are needed.
+2. Reconcile example county aggregates against cached raw records and verify artifact integrity.
+3. Preserve the fixed model and split. Corrected held out county payment MAE is about $7.52 million versus $12.70 million for the mean baseline; payment range coverage is about 89.12%. Count MAE is about 87.23 versus 165.12. Large event totals are severely underestimated. Do not call these estimates operationally reliable.
+4. Run Streamlit AppTest and browser checks with completed artifacts, including missing credentials, portfolio uploads, storm switching and every tab.
+5. Rewrite README/submission text with verified behavior and actual metrics. Update this file after each major task.
+6. Review Changes in GitHub Desktop for secrets/raw caches, then commit. Publish reviewed source and public aggregates if account access permits.
+7. Stop only for necessary user involvement with Nebius/keys or new cloud authentication, legal terms, or security permissions. Provide one clear next action.
+
+## Major task update: ingestion completed, target audit correction
+
+All 16 event windows downloaded, 552,616 distinct claim records. Initial strict complete case benchmark was generated, but the audit found severe selection bias: any missing field excluded an entire county, including many severely affected counties. Those preliminary metrics must not be used. The target definition is being corrected to sum available reported payment components, retain signed adjustments, and explicitly track missing components. It is not a complete or ultimate loss target. Ambiguous targets, negative county sums, and entirely missing payment targets remain excluded. The fixed model/splits are unchanged. Rebuild from cached raw records, rerun validation, and document final metrics and missingness. No data downloads need restarting.
+
+## Major task update: corrected benchmark completed
+
+552,616 distinct downloaded claims; 6,460 study county rows; 6,299 eligible targets. 53,853 records unmatched and 1,239 ambiguous under the matching rule. There are 69,632 downloaded records with missing or negative payment fields; negative signed adjustments are retained in the reported sum, while missing fields remain unestimated. The model uses 3,322 training rows, 1,047 calibration rows, and 1,930 final test rows. Gradient boosting was selected for both targets using calibration MAE. The model severely underestimates Ian, Helene, Milton, and Ida totals, and the UI now warns prominently. No final test tuning was performed. The initial target definition was corrected because an audit exposed exclusion bias; preliminary results are superseded.
+
+## Checkpoint: source and benchmark verification
+
+All 23 tests passed after the corrected target aggregation rebuild. No failed tests remain. The joblib CPU detection warning is nonfatal. Credential scan found no private .env or secrets.toml files; the template contains empty values. Raw claims and partial downloads remain ignored. Preparing the first meaningful data/model/agent checkpoint through GitHub Desktop. README and final app verification are the next task.

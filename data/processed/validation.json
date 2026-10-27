@@ -1,0 +1,87 @@
+{
+  "metrics": [
+    {
+      "target": "claim_count",
+      "model": "mean_baseline",
+      "calibration_mae": 108.09621797205051,
+      "test_mae": 165.12494564420584,
+      "test_rmsle": 4.327457722376715
+    },
+    {
+      "target": "claim_count",
+      "model": "gradient_boosting",
+      "calibration_mae": 38.68570949209207,
+      "test_mae": 87.22961400213457,
+      "test_rmsle": 1.716040607925211
+    },
+    {
+      "target": "paid_loss",
+      "model": "mean_baseline",
+      "calibration_mae": 6495694.632222918,
+      "test_mae": 12702101.67711206,
+      "test_rmsle": 14.267099797974385
+    },
+    {
+      "target": "paid_loss",
+      "model": "gradient_boosting",
+      "calibration_mae": 1281836.5184902968,
+      "test_mae": 7521606.880223773,
+      "test_rmsle": 9.467763646045869
+    }
+  ],
+  "chosen_models": {
+    "claim_count": "gradient_boosting",
+    "paid_loss": "gradient_boosting"
+  },
+  "coverage": {
+    "claim_count": 0.877720207253886,
+    "paid_loss": 0.8911917098445595
+  },
+  "interval_method": "90th percentile absolute calibration residual, symmetric and clipped at zero; empirical, not guaranteed",
+  "train_rows": 3322,
+  "calibration_rows": 1047,
+  "test_rows": 1930,
+  "train_storms": [
+    "AL092011",
+    "AL092012",
+    "AL182012",
+    "AL142016",
+    "AL092017",
+    "AL112017",
+    "AL062018",
+    "AL142018"
+  ],
+  "calibration_storms": [
+    "AL052019",
+    "AL132020",
+    "AL192020"
+  ],
+  "test_storms": [
+    "AL092021",
+    "AL092022",
+    "AL102023",
+    "AL092024",
+    "AL142024"
+  ],
+  "features": [
+    "min_distance_km",
+    "max_wind_knots",
+    "hours_near",
+    "log_land_area",
+    "water_share",
+    "latitude",
+    "longitude"
+  ],
+  "limitations": [
+    "Targets are available reported NFIP payment sums, not ultimate or complete losses. Missing components are counted separately, not inferred.",
+    "Signed payment adjustments are retained. Negative county totals and entirely missing payment targets are excluded.",
+    "Selected storm cohort, not a representative sample of all storms.",
+    "Geographic proximity and dates do not prove storm causation.",
+    "County internal points miss large county footprints and remote rainfall flooding.",
+    "No historical policy exposure denominator; insurance take up and coverage changes are unmodeled.",
+    "Claims include zero payment records; counts are matched records, not unique properties.",
+    "Current county geography is used retrospectively. NRI is context only, excluded from predictors.",
+    "Intervals are empirical and county errors are correlated within storms.",
+    "Full observed tracks are used, so this is a retrospective benchmark, not a forecast validation."
+  ]
+}

@@ -1,0 +1,146 @@
+[
+  {
+    "source": "https://www.fema.gov/api/open/v3/NfipClaims",
+    "filter": "dateOfLoss ge '2011-08-27T00:00:00.000Z' and dateOfLoss le '2011-09-01T00:00:00.000Z'",
+    "select": "id,countyCode,dateOfLoss,amountPaidOnBuildingClaim,amountPaidOnContentsClaim,amountPaidOnIncreasedCostOfComplianceClaim,floodEvent",
+    "retrieved_utc": "2026-10-27T06:00:02.180810+00:00",
+    "expected_count": 51516,
+    "storm_id": "AL092011",
+    "sha256": "bf122012d1c1b611358a8d61838777d41ab62668c5565d551f2b58b091fe163a"
+  },
+  {
+    "source": "https://www.fema.gov/api/open/v3/NfipClaims",
+    "filter": "dateOfLoss ge '2012-08-26T00:00:00.000Z' and dateOfLoss le '2012-09-04T00:00:00.000Z'",
+    "select": "id,countyCode,dateOfLoss,amountPaidOnBuildingClaim,amountPaidOnContentsClaim,amountPaidOnIncreasedCostOfComplianceClaim,floodEvent",
+    "retrieved_utc": "2026-10-27T06:00:28.156444+00:00",
+    "expected_count": 17229,
+    "storm_id": "AL092012",
+    "sha256": "a2d7fad03408616ea1dd5f5511b1a5fbd3cd9b6f65641e25d5db58b007544948"
+  },
+  {
+    "source": "https://www.fema.gov/api/open/v3/NfipClaims",
+    "filter": "dateOfLoss ge '2012-10-29T00:00:00.000Z' and dateOfLoss le '2012-11-03T00:00:00.000Z'",
+    "select": "id,countyCode,dateOfLoss,amountPaidOnBuildingClaim,amountPaidOnContentsClaim,amountPaidOnIncreasedCostOfComplianceClaim,floodEvent",
+    "retrieved_utc": "2026-10-27T06:02:00.916910+00:00",
+    "expected_count": 142817,
+    "storm_id": "AL182012",
+    "sha256": "2aed78ebd9b7ae52a00131e2f14161928536f95ae2b0527dd2c550c5c2e54183"
+  },
+  {
+    "source": "https://www.fema.gov/api/open/v3/NfipClaims",
+    "filter": "dateOfLoss ge '2016-10-06T00:00:00.000Z' and dateOfLoss le '2016-10-12T00:00:00.000Z'",
+    "select": "id,countyCode,dateOfLoss,amountPaidOnBuildingClaim,amountPaidOnContentsClaim,amountPaidOnIncreasedCostOfComplianceClaim,floodEvent",
+    "retrieved_utc": "2026-10-27T06:02:07.074414+00:00",
+    "expected_count": 21608,
+    "storm_id": "AL142016",
+    "sha256": "fb34e7d1ffcb4049ec1b6f5c8fa6475e25aec499aa87448a1e6055c212251a24"
+  },
+  {
+    "source": "https://www.fema.gov/api/open/v3/NfipClaims",
+    "filter": "dateOfLoss ge '2017-08-25T00:00:00.000Z' and dateOfLoss le '2017-09-05T00:00:00.000Z'",
+    "select": "id,countyCode,dateOfLoss,amountPaidOnBuildingClaim,amountPaidOnContentsClaim,amountPaidOnIncreasedCostOfComplianceClaim,floodEvent",
+    "retrieved_utc": "2026-10-27T06:10:00.935481+00:00",
+    "expected_count": 93020,
+    "storm_id": "AL092017",
+    "sha256": "153be4a3138ab5f9014ca58e8dd882b7bf9558be20fa9fe71a8c59c9d2ad92ba"
+  },
+  {
+    "source": "https://www.fema.gov/api/open/v3/NfipClaims",
+    "filter": "dateOfLoss ge '2017-09-09T00:00:00.000Z' and dateOfLoss le '2017-09-16T00:00:00.000Z'",
+    "select": "id,countyCode,dateOfLoss,amountPaidOnBuildingClaim,amountPaidOnContentsClaim,amountPaidOnIncreasedCostOfComplianceClaim,floodEvent",
+    "retrieved_utc": "2026-10-27T06:12:48.921080+00:00",
+    "expected_count": 33414,
+    "storm_id": "AL112017",
+    "sha256": "d3b033ddfd54ff45d90c2988dfab0afe5bfc18f62b60ee8531ca8947e207d7b1"
+  },
+  {
+    "source": "https://www.fema.gov/api/open/v3/NfipClaims",
+    "filter": "dateOfLoss ge '2018-09-13T00:00:00.000Z' and dateOfLoss le '2018-09-21T00:00:00.000Z'",
+    "select": "id,countyCode,dateOfLoss,amountPaidOnBuildingClaim,amountPaidOnContentsClaim,amountPaidOnIncreasedCostOfComplianceClaim,floodEvent",
+    "retrieved_utc": "2026-10-27T06:10:25.891043+00:00",
+    "expected_count": 16454,
+    "storm_id": "AL062018",
+    "sha256": "df9819eba0d75c9ab921f8b46b2fe5f0c5396d94ebe41e2fe0266e1dc4208dc1"
+  },
+  {
+    "source": "https://www.fema.gov/api/open/v3/NfipClaims",
+    "filter": "dateOfLoss ge '2018-10-10T00:00:00.000Z' and dateOfLoss le '2018-10-15T00:00:00.000Z'",
+    "select": "id,countyCode,dateOfLoss,amountPaidOnBuildingClaim,amountPaidOnContentsClaim,amountPaidOnIncreasedCostOfComplianceClaim,floodEvent",
+    "retrieved_utc": "2026-10-27T06:10:49.347441+00:00",
+    "expected_count": 5352,
+    "storm_id": "AL142018",
+    "sha256": "9169632000a2c9e9216621a691ab04714c2f49064ca5b76f7e6ad587fb285230"
+  },
+  {
+    "source": "https://www.fema.gov/api/open/v3/NfipClaims",
+    "filter": "dateOfLoss ge '2019-09-02T00:00:00.000Z' and dateOfLoss le '2019-09-10T00:00:00.000Z'",
+    "select": "id,countyCode,dateOfLoss,amountPaidOnBuildingClaim,amountPaidOnContentsClaim,amountPaidOnIncreasedCostOfComplianceClaim,floodEvent",
+    "retrieved_utc": "2026-10-27T06:10:54.559988+00:00",
+    "expected_count": 1564,
+    "storm_id": "AL052019",
+    "sha256": "0fb9ce71db20c50da4ffa7c8c442bdceea05da80a93645cc8a7c0d55140166cc"
+  },
+  {
+    "source": "https://www.fema.gov/api/open/v3/NfipClaims",
+    "filter": "dateOfLoss ge '2020-08-26T00:00:00.000Z' and dateOfLoss le '2020-09-01T00:00:00.000Z'",
+    "select": "id,countyCode,dateOfLoss,amountPaidOnBuildingClaim,amountPaidOnContentsClaim,amountPaidOnIncreasedCostOfComplianceClaim,floodEvent",
+    "retrieved_utc": "2026-10-27T06:10:56.923378+00:00",
+    "expected_count": 1532,
+    "storm_id": "AL132020",
+    "sha256": "8131949605595e085444b8965d0cb67961b54399f4d1f16768cb518004926038"
+  },
+  {
+    "source": "https://www.fema.gov/api/open/v3/NfipClaims",
+    "filter": "dateOfLoss ge '2020-09-11T00:00:00.000Z' and dateOfLoss le '2020-09-21T00:00:00.000Z'",
+    "select": "id,countyCode,dateOfLoss,amountPaidOnBuildingClaim,amountPaidOnContentsClaim,amountPaidOnIncreasedCostOfComplianceClaim,floodEvent",
+    "retrieved_utc": "2026-10-27T06:11:05.379223+00:00",
+    "expected_count": 8813,
+    "storm_id": "AL192020",
+    "sha256": "e88c94e8d16eb40e5825665512eaccf6838227ae72e4388c53e5c2279fd34cec"
+  },
+  {
+    "source": "https://www.fema.gov/api/open/v3/NfipClaims",
+    "filter": "dateOfLoss ge '2021-08-29T00:00:00.000Z' and dateOfLoss le '2021-09-06T00:00:00.000Z'",
+    "select": "id,countyCode,dateOfLoss,amountPaidOnBuildingClaim,amountPaidOnContentsClaim,amountPaidOnIncreasedCostOfComplianceClaim,floodEvent",
+    "retrieved_utc": "2026-10-27T06:12:04.232228+00:00",
+    "expected_count": 28505,
+    "storm_id": "AL092021",
+    "sha256": "6b51408960a4c9762c056a9958d0022f642024f11f1db7ca572d18fe975ba0e6"
+  },
+  {
+    "source": "https://www.fema.gov/api/open/v3/NfipClaims",
+    "filter": "dateOfLoss ge '2022-09-28T00:00:00.000Z' and dateOfLoss le '2022-10-04T00:00:00.000Z'",
+    "select": "id,countyCode,dateOfLoss,amountPaidOnBuildingClaim,amountPaidOnContentsClaim,amountPaidOnIncreasedCostOfComplianceClaim,floodEvent",
+    "retrieved_utc": "2026-10-27T06:16:12.742398+00:00",
+    "expected_count": 46455,
+    "storm_id": "AL092022",
+    "sha256": "c5d38388b76413480401b6424270cf2c3d05e7e1dfe57bd633f22f211a28334d"
+  },
+  {
+    "source": "https://www.fema.gov/api/open/v3/NfipClaims",
+    "filter": "dateOfLoss ge '2023-08-29T00:00:00.000Z' and dateOfLoss le '2023-09-03T00:00:00.000Z'",
+    "select": "id,countyCode,dateOfLoss,amountPaidOnBuildingClaim,amountPaidOnContentsClaim,amountPaidOnIncreasedCostOfComplianceClaim,floodEvent",
+    "retrieved_utc": "2026-10-27T06:12:55.069194+00:00",
+    "expected_count": 5579,
+    "storm_id": "AL102023",
+    "sha256": "11f247d4a8ef41b251e46b0083bc48f1ffcf431fe0b166c95221fbec2cf7d3bb"
+  },
+  {
+    "source": "https://www.fema.gov/api/open/v3/NfipClaims",
+    "filter": "dateOfLoss ge '2024-09-26T00:00:00.000Z' and dateOfLoss le '2024-10-01T00:00:00.000Z'",
+    "select": "id,countyCode,dateOfLoss,amountPaidOnBuildingClaim,amountPaidOnContentsClaim,amountPaidOnIncreasedCostOfComplianceClaim,floodEvent",
+    "retrieved_utc": "2026-10-27T11:18:02.536229+00:00",
+    "expected_count": 57592,
+    "storm_id": "AL092024",
+    "sha256": "2b941122e6c043c8eae6ebbdaffe59ff626c36eba4f3bac5ea2b2ee9e11d82c3"
+  },
+  {
+    "source": "https://www.fema.gov/api/open/v3/NfipClaims",
+    "filter": "dateOfLoss ge '2024-10-09T00:00:00.000Z' and dateOfLoss le '2024-10-13T00:00:00.000Z'",
+    "select": "id,countyCode,dateOfLoss,amountPaidOnBuildingClaim,amountPaidOnContentsClaim,amountPaidOnIncreasedCostOfComplianceClaim,floodEvent",
+    "retrieved_utc": "2026-10-27T06:16:10.843571+00:00",
+    "expected_count": 21166,
+    "storm_id": "AL142024",
+    "sha256": "db2dee358d1c5917c0d33e9da8090c37456e0e60e530aae0cb2296800d3926c8"
+  }
+]

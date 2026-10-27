@@ -1,1 +1,11 @@
 streamlit==1.66.1
+pandas==3.1.0
+numpy==2.5.4
+pydeck==0.9.3
+scikit-learn==1.9.1
+pytest==9.1.1
+python-dotenv==1.2.4
+openai==3.39.0
+tavily-python==0.8.5
+requests==2.34.2
+joblib==1.6.0

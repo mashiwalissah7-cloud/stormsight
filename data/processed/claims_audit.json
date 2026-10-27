@@ -1,0 +1,27 @@
+{
+  "unmatched": 53853,
+  "ambiguous": 1239,
+  "matched": 497524,
+  "unique_downloaded_claims": 552616,
+  "missing_or_negative_payment_records": 69632,
+  "study_county_rows": 6460,
+  "eligible_rows": 6299,
+  "study_storms": [
+    "AL092011",
+    "AL092012",
+    "AL182012",
+    "AL142016",
+    "AL092017",
+    "AL112017",
+    "AL062018",
+    "AL142018",
+    "AL052019",
+    "AL132020",
+    "AL192020",
+    "AL092021",
+    "AL092022",
+    "AL102023",
+    "AL092024",
+    "AL142024"
+  ]
+}
