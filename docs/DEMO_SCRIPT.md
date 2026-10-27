@@ -1,27 +1,39 @@
-# Demonstration script
+# Demonstration video script
 
-Target duration: approximately two minutes and forty seconds. Rehearse once and keep the final public YouTube video under three minutes.
+Target length: about 2 minutes 40 seconds. YouTube or Vimeo, set to public or unlisted with no password. Only the first three minutes are reviewed.
 
-## Opening: twenty seconds
+Record on the live app: https://stormsight-hurricane.streamlit.app/ . On a Mac, press Shift + Cmd + 5, choose Record Entire Screen, open Options, pick the built in microphone, then click Record. Stop from the menu bar.
 
-StormSight is an open research tool for inspecting hurricane flood insurance claims. It connects public storm tracks, county geography, and FEMA claims, then makes the model assumptions and mistakes visible.
+## 0:00 to 0:20, opening (Helene already on screen)
 
-## Live demonstration: seventy seconds
+"This is StormSight. After a hurricane, a map shows where the storm went, but not what the flooding cost. StormSight connects NOAA storm tracks with FEMA flood insurance claims, and uses an NVIDIA Nemotron agent on Nebius to explain the evidence without inventing numbers."
 
-Select Helene in the historical season menu. Show the observed path and the county corridor. Explain that the corridor is a geographic screening rule, not a flood boundary.
+## 0:20 to 1:00, storm briefing
 
-Open the county evidence table. Point out the difference between observed matched payments, model estimates, and empirical ranges. Open the NOAA observations and source link.
+Scroll slowly past the map and the county table.
 
-Open Portfolio. Use the fictional sample and show the value inside the corridor. Explain that this is exposed value, not a prediction of losses to those properties.
+"This is Hurricane Helene in 2024. The line is the observed track, and each dot is a county center within 250 kilometers. For every county, the model estimates flood insurance claims and payments, with a range. Helene was held out from training, so I can compare the estimates with what FEMA actually paid."
 
-## Validation: fifty seconds
+## 1:00 to 1:45, the agent
 
-Open Does it work. Show the separate training, calibration, and test storms. Explain that model selection used calibration error. Point to the real baseline comparison, interval coverage, and largest misses. Read the actual figures from the current app rather than memorizing unverified numbers.
+In the sidebar, choose Milton (2024). Scroll to Generate Nemotron briefing and click it. Keep talking while it runs.
 
-Explain that the prototype has no rainfall or storm surge input and no historical NFIP policy exposure denominator. It cannot be treated as a commercial catastrophe model.
+"Now the agent. Nemotron, running on Nebius Token Factory, decides which evidence tools to call. Python runs those tools and renders every number on the page. Nemotron writes only the summary, the uncertainties, and what to watch. If it writes a number or a link, the briefing is rejected, so it cannot invent figures."
 
-## Agent and close: twenty seconds
+When it finishes, open Agent tool trace for two seconds.
 
-Only after a successful live Nebius test, demonstrate Generate Nemotron briefing and open the tool trace. Explain that the model chooses evidence tools and writes qualitative prose while Python computes and renders every numerical table. Invalid generated numerical prose is rejected.
+## 1:45 to 2:05, portfolio
 
-If the service is not connected, do not pretend this step works. Complete the connection before recording a hackathon video that claims compliance.
+Open the Portfolio tab.
+
+"The Portfolio tab screens insured value inside the storm corridor. It is a geographic screen, not a loss estimate."
+
+## 2:05 to 2:35, does it work
+
+Open the Does it work? tab and scroll to the storm totals.
+
+"On five storms the model never saw, it cut average county payment error from 12.7 million dollars to 7.5 million compared with a simple baseline, and its ranges held about 89 percent of the time. But it badly underestimates the biggest storms. Helene paid about 6.2 billion dollars, and the model estimated about 200 million. StormSight shows that failure instead of hiding it."
+
+## 2:35 to 2:45, close
+
+"StormSight is open source and live at stormsight-hurricane.streamlit.app. Thank you."

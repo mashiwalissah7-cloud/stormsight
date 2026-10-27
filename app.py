@@ -18,7 +18,7 @@ from src.stormsight.news import search_storm_news
 ROOT=Path(__file__).parent
 PROCESSED=ROOT/'data/processed'
 load_dotenv(ROOT/'.env')
-st.set_page_config(page_title='StormSight | Hurricane evidence',page_icon='🌀',layout='wide')
+st.set_page_config(page_title='StormSight | Hurricane flood claims',page_icon=str(ROOT/'assets'/'favicon.png'),layout='wide')
 st.markdown('''<style>
 .block-container{max-width:1400px;padding-top:4rem;padding-bottom:3rem}
 h1{font-size:3rem!important;letter-spacing:-.055em!important;font-weight:750!important}
@@ -28,7 +28,7 @@ h2{letter-spacing:-.025em!important} [data-testid="stMetric"]{background:#142236
 .stTabs [data-baseweb="tab"]{font-size:15px;padding-bottom:14px}
 .eyebrow{color:#38d9c5;font-size:12px;letter-spacing:.2em;font-weight:700;margin-bottom:10px}
 .subhead{color:#a7b8cc;font-size:17px;max-width:760px;margin-bottom:24px}
-.badge{display:inline-block;border:1px solid #30515b;background:#102d34;color:#71e8d8;padding:5px 12px;border-radius:20px;font-size:12px;margin-bottom:12px}
+.badge{display:inline-block;border:1px solid #30515b;background:#102d34;color:#71e8d8;padding:5px 12px;border-radius:6px;font-size:12px;margin-bottom:12px}
 [data-testid="stSidebar"]{border-right:1px solid #26384d}
 @media(max-width:800px){[data-testid="stHorizontalBlock"]{flex-wrap:wrap}[data-testid="stColumn"]{min-width:calc(50% - 1rem)!important;flex:1 1 calc(50% - 1rem)!important}h1{font-size:2.3rem!important}}
 </style>''',unsafe_allow_html=True)
@@ -98,7 +98,7 @@ except (OSError,ValueError) as error:
     st.stop()
 
 with st.sidebar:
-    st.markdown('### 🌀 StormSight')
+    st.markdown('### StormSight')
     st.caption('HURRICANE EVIDENCE LAB')
     st.divider()
     years=sorted(tracks.year.unique(),reverse=True)
@@ -133,8 +133,8 @@ if (PROCESSED/'study_counties.csv').exists():
 status='Held out test storm' if sid in TEST else 'Calibration storm' if sid in CALIBRATION else 'Training storm' if sid in TRAIN else 'Outside benchmark cohort'
 
 st.markdown('<div class="eyebrow">STORMSIGHT / HURRICANE EVIDENCE LAB</div>',unsafe_allow_html=True)
-st.title('Hurricane evidence, in one view.')
-st.markdown('<div class="subhead">Trace a storm. Inspect county flood claims. See where the model holds up, and where it falls short.</div>',unsafe_allow_html=True)
+st.title('Hurricane flood claims, county by county')
+st.markdown('<div class="subhead">Pick a past Atlantic hurricane to see its NOAA track, the counties near it, FEMA flood insurance claims, and model estimates with ranges, including where the model misses.</div>',unsafe_allow_html=True)
 st.markdown('<span class="badge">Research prototype · Historical replay</span>',unsafe_allow_html=True)
 st.caption('Research and education only. Not a commercial catastrophe model, live forecast, insurance quote, or emergency guidance.')
 
@@ -263,7 +263,7 @@ with briefing:
 
 
 with validation:
-    st.subheader('Trust the evidence. Inspect the misses.')
+    st.subheader('How accurate is the model?')
     st.write('A historical storm map is not proof of prediction accuracy. This benchmark compares a mean baseline with gradient boosting on storms excluded from training.')
     report_path=PROCESSED/'validation.json'
     if report_path.exists():
@@ -293,3 +293,9 @@ with validation:
     st.markdown('**Source ledger**')
     st.markdown('[NOAA HURDAT2](https://www.nhc.noaa.gov/data/#hurdat) · [OpenFEMA NFIP v3](https://www.fema.gov/openfema-data-page/nfip-redacted-claims-v3) · [Census Gazetteer](https://www.census.gov/geographies/reference-files/2025/geo/gazetter-file.html) · [FEMA NRI](https://www.arcgis.com/home/item.html?id=39485e8035d446a5bff03259508ae355)')
     st.caption('NOAA: 1851 through 2025 release. Census: 2025 county internal points. NRI: December 2025. Claims: API retrieval timestamps are recorded in the source manifest. Research snapshot downloaded October 27, 2026.')
+
+st.divider()
+legal=st.columns([1,1,4])
+legal[0].page_link('pages/privacy.py',label='Privacy policy')
+legal[1].page_link('pages/terms.py',label='Terms and conditions')
+legal[2].caption('Open source under the MIT license. Data from NOAA, FEMA, and the U.S. Census Bureau.')

@@ -1,10 +1,10 @@
 # StormSight
 
-[MIT license](LICENSE) · [Setup guide](docs/SETUP.md) · [Project handoff](PROJECT_HANDOFF.md)
+**[Live app](https://stormsight-hurricane.streamlit.app/)** · [MIT license](LICENSE) · [Setup guide](docs/SETUP.md) · [Project handoff](PROJECT_HANDOFF.md)
 
-Hurricane evidence in one view. StormSight helps students and researchers connect an observed storm path with county flood insurance claims, inspect a small predictive model, and see its largest mistakes.
+StormSight helps students and researchers connect an observed hurricane track with county flood insurance claims, inspect a small predictive model, and see its largest mistakes.
 
-**Working locally:** historical maps, county estimates, portfolio corridor screening, data provenance, and a benchmark on five unseen storms. **Verified live on October 27, 2026:** an NVIDIA Nemotron 3 Super briefing (`nvidia/nemotron-3-super-120b-a12b`) through Nebius Token Factory, with every prose check passing. **Still required for the hackathon:** public hosting and the final demonstration video. The Tavily lookup is implemented but has not yet been tested with a live key.
+**Working locally:** historical maps, county estimates, portfolio corridor screening, data provenance, and a benchmark on five unseen storms. **Verified live on October 27, 2026:** an NVIDIA Nemotron 3 Super briefing (`nvidia/nemotron-3-super-120b-a12b`) through Nebius Token Factory, with every prose check passing. The public app at https://stormsight-hurricane.streamlit.app/ ran the same live briefing successfully. **Still required for the hackathon:** the final demonstration video. The Tavily lookup is implemented but has not yet been tested with a live key.
 
 This is a research prototype. It is not a live forecast, commercial catastrophe model, insurance quote, or emergency guidance.
 
