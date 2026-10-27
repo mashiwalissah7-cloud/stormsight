@@ -1,12 +1,16 @@
 # StormSight
 
-A research and education tool for exploring hurricane flood insurance losses. It is not a commercial catastrophe model.
+[MIT license](LICENSE) · [Setup guide](docs/SETUP.md) · [Project handoff](PROJECT_HANDOFF.md)
 
-## Current status
+Hurricane evidence in one view. StormSight helps students and researchers connect an observed storm path with county flood insurance claims, inspect a small predictive model, and see its largest mistakes.
 
-The app displays historical NOAA storm observations on a map. Users can choose a season and storm, inspect measurements, and download the selected observations. Loss predictions, portfolio calculations, and AI briefings are not implemented yet.
+**Working locally:** historical maps, county estimates, portfolio corridor screening, data provenance, and a benchmark on five unseen storms. **Still required for the hackathon:** a verified NVIDIA Nemotron call through Nebius Token Factory, public hosting, and the final demonstration video. The API adapters are implemented but have not been tested with live credentials.
 
-## Run locally
+This is a research prototype. It is not a live forecast, commercial catastrophe model, insurance quote, or emergency guidance.
+
+## Try the app
+
+Tested locally with Python 3.14.6. The source snapshots and trained benchmark are included, so no data download or API key is needed to explore the app.
 
 ```sh
 python3 -m venv .venv
@@ -14,34 +18,98 @@ python3 -m venv .venv
 .venv/bin/python -m streamlit run app.py
 ```
 
-## Verified data source
+Open the localhost address printed by Streamlit. Map tiles require internet access. The calculations use local files.
 
-Provider: NOAA National Hurricane Center.
+1. Start with Helene in the 2024 season. Inspect its observed track and nearby county points.
+2. Read the county estimates and expand the observed claims comparison. Estimates, observations, and empirical ranges are distinct.
+3. Open Portfolio and use the clearly labelled fictional sample. It reports insured value near the track, not portfolio losses.
+4. Open Does it work? Compare the baseline, model errors, storm totals, and largest misses.
+5. Connect Nebius only through the private configuration described in [SETUP.md](docs/SETUP.md). Never paste secrets into a repository or project description.
 
-Dataset: Atlantic HURDAT2, covering 1851 through 2025. The archive describes this release as updated on September 23, 2026.
+## What the model estimates
 
-[Source file](https://www.nhc.noaa.gov/data/hurdat/hurdat2-1851-2025-092326.txt)
+The targets are matched NFIP claim record counts and sums of available reported building, contents, and increased cost of compliance payments. These are not total hurricane damage, unique properties, ultimate settled losses, or private insurance losses.
 
-[Format documentation](https://www.nhc.noaa.gov/data/hurdat/hurdat2-format-atl-1851-2021.pdf)
+A county enters the study when its Census internal point is within 250 km of an hourly interpolated observed storm center. Claims are matched by county and loss date from the first nearby day through three days after the last nearby day. Matching checks all nearby storms during 2011 through 2024, including storms outside the selected cohort. Ambiguous claim matches are excluded, and affected county targets are excluded from evaluation. Proximity and dates do not establish causation.
 
-Retrieved on October 27, 2026. The original file is stored in `data/raw` unchanged.
+Available payment components are summed with signed adjustments preserved. Missing fields are counted and remain unestimated. County sums may therefore be incomplete. Negative county sums and targets with claims but no available payment components are excluded. Counties with no matched records have zero matched records and payments under this study definition.
 
-SHA256: `75202780ce56c8458f16fbef5fb8a026b99b00878dbb95c458211b3e6ef125b4`
+The seven predictors are track distance, nearby maximum wind, nearby duration, log land area, water fraction, latitude, and longitude. The model has no rainfall, surge, coastal classification, or historical NFIP policy exposure denominator. Current NRI scores are context only and never enter the model.
 
-The reader loaded 55,524 observations across 1,988 storms and checked the declared observation counts. Times are UTC. Wind is measured in knots and pressure in millibars. Negative measurement sentinels become missing values. Special observations, including landfall records between regular observation times, are retained.
+## Actual benchmark results
 
-## Checks
+The cohort has 16 storms and 6,460 county and storm rows, of which 6,299 are eligible. The split was fixed before model fitting:
+
+| Split | Storms | Eligible county rows |
+| :--- | :--- | ---: |
+| Train | Irene 2011, Isaac and Sandy 2012, Matthew 2016, Harvey and Irma 2017, Florence and Michael 2018 | 3,322 |
+| Calibration | Dorian 2019, Laura and Sally 2020 | 1,047 |
+| Final test | Ida 2021, Ian 2022, Idalia 2023, Helene and Milton 2024 | 1,930 |
+
+A mean baseline is compared with Poisson histogram gradient boosting. Selection uses calibration mean absolute error, separately for each target. Final test targets do not control fitting, model choice, or interval widths. No tuning was performed on the final test storms.
+
+| Final test measure | Mean baseline | Gradient boosting |
+| :--- | ---: | ---: |
+| Claim count mean absolute error | 165.12 records | 87.23 records |
+| Reported payment mean absolute error | $12,702,102 | $7,521,607 |
+| Claim count RMSLE | 4.327 | 1.716 |
+| Reported payment RMSLE | 14.267 | 9.468 |
+
+Lower is better. The model improves average error but **severely underestimates several large storm totals**. For example, over eligible county targets, Helene has about $6.24 billion in matched reported payments versus a $200.59 million model total. Ian has about $4.73 billion observed versus $511.70 million estimated. The model is not ready for operational or financial decisions.
+
+Ranges use the 90th percentile absolute calibration residual, symmetrically around each estimate with a lower floor of zero. Measured final test coverage is 87.77% for claim counts and 89.12% for payments. These are empirical results, not guaranteed confidence bounds. County errors are correlated within storms. Full observed tracks make this a retrospective benchmark, not a forecast validation.
+
+Exact metrics, predictions, storm totals, source manifests, and an independent county reconciliation are in `data/processed`. The first complete case target definition was discarded after an audit showed severe exclusion bias. The available component target above is the documented correction; preliminary metrics must not be cited.
+
+## Verified public sources
+
+Snapshot retrieved October 27, 2026. Source URLs, dates, and checksums are saved in the manifests.
+
+| Provider | Source | Use |
+| :--- | :--- | :--- |
+| NOAA NHC | [Atlantic HURDAT2](https://www.nhc.noaa.gov/data/hurdat/hurdat2-1851-2025-092326.txt), 1851 through 2025 | 55,524 observations across 1,988 storms |
+| U.S. Census Bureau | [2025 county Gazetteer](https://www2.census.gov/geo/docs/maps-data/data/gazetteer/2025_Gazetteer/2025_Gaz_counties_national.zip) | 3,222 county internal points and area measurements |
+| FEMA | [NFIP redacted claims v3](https://www.fema.gov/openfema-data-page/nfip-redacted-claims-v3) | 552,616 distinct downloaded records across bounded event windows |
+| FEMA National Risk Index | [Official county service metadata](https://www.arcgis.com/home/item.html?id=39485e8035d446a5bff03259508ae355) | 3,232 rows, December 2025 context |
+
+The claims API is `https://www.fema.gov/api/open/v3/NfipClaims`. The earlier v2 endpoint returned 404. Of the distinct downloaded claims, 53,853 are unmatched and 1,239 ambiguous under this rule. There are 69,632 records with a missing or negative payment field. Negative adjustments are preserved; missing values are not silently labelled as complete payments.
+
+`BUILDVALUE` in NRI is building stock value, not an NFIP insured exposure denominator. `HRCN_EALT` is annual hurricane risk context, not the selected storm loss. Map attribution belongs to CARTO and OpenStreetMap. The MIT license covers project code; upstream data retain their source terms and attribution.
+
+## Portfolio and AI boundaries
+
+Portfolio CSV files require exactly `county_fips` and `insured_value`. Values must be finite and nonnegative, and county codes must be five digits and present in the county source. Duplicate county rows are summed. Uploads are limited to 2 MB. The app does not save uploads to disk. On a hosted app, upload processing occurs on its server.
+
+Portfolio value within the corridor is a geographic screen. It is not predicted damage and cannot be obtained by scaling county claims without an appropriate exposure denominator.
+
+The optional Nemotron agent uses a validated JSON tool plan. Python runs tools bound to the selected storm and renders all numerical evidence. Generated prose must use the required qualitative fields and cannot contain numerical quantities or URLs. Invalid prose is retried once, then rejected. These checks do not prove semantic accuracy. Native function calling and live model compatibility remain unverified.
+
+The default summary is explicitly produced by Python. It is never presented as an AI response. Optional Tavily queries use the selected storm name and year and return links only from official NHC, FEMA, or weather.gov domains. Only if the user opts in are aggregate portfolio totals included in a Nebius request. Individual portfolio rows are not sent to Nebius.
+
+## Reproduce and test
+
+Run from the repository root:
 
 ```sh
-.venv/bin/python -m unittest discover -s tests -v
+.venv/bin/python -m pytest -q
+.venv/bin/python -m pip check
+.venv/bin/python -m analysis.validation
 ```
 
-The reader checks coordinates, missing pressure, record counts, duplicate timestamps, and empty input. These checks test data handling only. They do not establish prediction accuracy.
+To refresh sources and rebuild the study, which requires internet access and may take time:
 
-## Limitations
+```sh
+.venv/bin/python -m scripts.fetch_sources
+.venv/bin/python -u -m scripts.build_dataset
+.venv/bin/python -m analysis.validation
+```
 
-This is historical replay, not a live forecast. Connecting recorded positions does not show a damage footprint. Storm tracks alone cannot establish flood damage or insured losses. Some older measurements are missing. Map tiles require an internet connection and are provided by CARTO and OpenStreetMap.
+The downloader uses ID pagination, checks counts, retries temporary errors, and resumes partial downloads. Raw claim caches and intermediate work are ignored by Git. API revisions can change a future snapshot; manifests identify this one. The included aggregate table can reproduce the benchmark without downloading raw claims.
 
-## Next steps
+Tests cover source parsing, geometry, duration units, ambiguous matching, missing payments, upload validation, agent restrictions, model independence from test targets, and dashboard interactions. GitHub Actions is configured but has not yet been run remotely. Only load the included trusted model artifact; joblib is not a format for untrusted uploads.
 
-Verify FEMA claims and county data, define and test storm matching, evaluate a loss model on unseen storms, and then connect an NVIDIA model through Nebius Token Factory.
+## Project map
+
+`app.py` is the interface. `src/stormsight` contains data, geographic features, models, portfolios, and service adapters. `scripts` builds source snapshots. `analysis` rebuilds the benchmark. `tests` verifies behavior. `docs` holds the setup guide, architecture, submission draft, and video script. `PROJECT_HANDOFF.md` records current progress and exact next steps.
+
+All current dependencies are pinned in `requirements.txt`. Use GitHub Desktop for commits. `.env`, Streamlit secrets, the virtual environment, raw claim caches, and temporary work must remain uncommitted.

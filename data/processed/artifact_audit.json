@@ -1,0 +1,25 @@
+{
+  "county_reconciliations": [
+    {
+      "storm_id": "AL092022",
+      "county_fips": "12071",
+      "claim_records": 27108,
+      "available_reported_payments_usd": "3272663141.62",
+      "claims_with_missing_component": 1872,
+      "reconciled": true
+    },
+    {
+      "storm_id": "AL092024",
+      "county_fips": "37021",
+      "claim_records": 419,
+      "available_reported_payments_usd": "72902719.42",
+      "claims_with_missing_component": 15,
+      "reconciled": true
+    }
+  ],
+  "test_predictions_reproduced": true,
+  "unique_study_keys": true,
+  "train_rows": 3322,
+  "calibration_rows": 1047,
+  "test_rows": 1930
+}

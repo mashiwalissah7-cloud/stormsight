@@ -14,7 +14,7 @@ The user now wants autonomous development until human input is truly needed. Do 
 
 Repository: /Users/ovabilli/Documents/GitHub/stormsight
 GitHub user: mashiwalissah7-cloud
-Branch: main. Local only at this update. Known commits: af475b9 Initial commit; 958e027 Add initial StormSight interface.
+Branch: main. Local only at this update. Known commits: af475b9 Initial commit; 958e027 Add initial StormSight interface; fe413fe Build audited NFIP benchmark and evidence dashboard.
 Python 3.14.6, virtual environment .venv. VS Code has this folder open.
 Local app: http://127.0.0.1:8501/ ; original server exec session 60887.
 The earlier ProofPlan site is abandoned and unrelated. Do not resume it.
@@ -126,3 +126,35 @@ All 16 event windows downloaded, 552,616 distinct claim records. Initial strict 
 ## Checkpoint: source and benchmark verification
 
 All 23 tests passed after the corrected target aggregation rebuild. No failed tests remain. The joblib CPU detection warning is nonfatal. Credential scan found no private .env or secrets.toml files; the template contains empty values. Raw claims and partial downloads remain ignored. Preparing the first meaningful data/model/agent checkpoint through GitHub Desktop. README and final app verification are the next task.
+
+## Major task update: first checkpoint and UI audit
+
+Checkpoint fe413fe saved through GitHub Desktop, 40 files, clean working tree verified before further changes. AppTest initially loaded all tabs without an app exception. The ad hoc storm switching script failed because it selected the season widget by the wrong index, not because the app failed. Replacing that check with label based widget selection. Fixed stale portfolio totals by processing and clearing portfolio state before the agent reads it. Added automatic work directory creation for downloads on a fresh clone. These fixes need regression checks and the next checkpoint.
+
+## Major task update: independent audit and documentation review, October 27
+
+Continued by Claude from the state above. Nothing was rebuilt and no data or model artifact was changed.
+
+Verified in an independent environment: all 23 non interface tests pass, and app.py compiles. tests/test_app.py (Streamlit AppTest) was not run there because Streamlit is not installed in that environment. It must be run on the Mac with `.venv/bin/python -m pytest -q`; expected result is 25 passed.
+
+Reviewed the portfolio fix: the portfolio block now runs before the briefing block, clears `portfolio-{sid}` first, and only stores totals for a valid current upload or the fictional sample. The work, raw, and processed directories are created at the start of `scripts/build_dataset.py`. Both fixes look correct and are covered by the new AppTest file.
+
+Checked every figure in README.md and docs/DEVPOST_DRAFT.md against validation.json, claims_audit.json, test_storm_totals.csv, and the raw files: HURDAT2 has 1,988 storms and 55,524 observations; the Gazetteer has 3,222 counties; NRI has 3,232 rows. All metrics, coverage values, split sizes, and the Helene and Ian totals match.
+
+Edits made:
+1. app.py: replaced the en dash in the source caption with "1851 through 2025".
+2. docs/DEVPOST_DRAFT.md: project name changed to "StormSight: An AI Evidence Agent for Hurricane Flood Claims" because the model estimates matched NFIP claims and reported payments, not total hurricane losses. Corrected "scikit-learn". Added the claim count result and measured coverage to Accomplishments.
+3. docs/DEMO_SCRIPT.md: "flood insurance losses" changed to "flood insurance claims" for the same reason.
+
+Streamlit Community Cloud now defaults to Python 3.14, so the pinned requirements should match the local environment. Select Python 3.14 in the deploy dialog under Advanced settings if it is offered.
+
+Files that must be included in the next GitHub Desktop commit: tests/test_app.py, docs/DEVPOST_DRAFT.md, docs/START_HERE.md, data/processed/artifact_audit.json, plus the modified README.md, app.py, scripts/build_dataset.py, docs/DEMO_SCRIPT.md, and this file. Confirm that no .env, .streamlit/secrets.toml, data/raw/claims files, or work files appear in Changes.
+
+Remaining steps, in order, before October 30, 2026 at 1 PM EDT:
+1. Run the full test suite on the Mac and confirm 25 passed.
+2. Commit through GitHub Desktop and publish the repository as public.
+3. Nebius: the user activates Token Factory, confirms credits, copies the exact Nemotron model ID and endpoint, and puts the key in .env himself. Never paste keys into chat or commit them. Then run one live briefing and record what happened.
+4. Tavily: same process for the optional key, then one live lookup.
+5. Deploy on Streamlit Community Cloud with the keys in the app Secrets panel, not in the repository.
+6. Record the YouTube video under three minutes from docs/DEMO_SCRIPT.md and set it to public, as the rules require.
+7. Fill the Devpost fields with the real URLs, model ID, and honest Nebius feedback, then submit.

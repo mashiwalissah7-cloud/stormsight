@@ -33,6 +33,9 @@ def request(params):
 
 
 def main():
+    RAW.mkdir(parents=True, exist_ok=True)
+    OUT.mkdir(parents=True, exist_ok=True)
+    Path('work').mkdir(exist_ok=True)
     tracks=load_tracks()
     counties=pd.read_csv(OUT/'counties.csv',dtype={'county_fips':str})
     # Restrict the study to contiguous states; exclude Alaska, Hawaii and territories.

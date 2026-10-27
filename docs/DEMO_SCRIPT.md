@@ -4,7 +4,7 @@ Target duration: approximately two minutes and forty seconds. Rehearse once and 
 
 ## Opening: twenty seconds
 
-StormSight is an open research tool for inspecting hurricane flood insurance losses. It connects public storm tracks, county geography, and FEMA claims, then makes the model assumptions and mistakes visible.
+StormSight is an open research tool for inspecting hurricane flood insurance claims. It connects public storm tracks, county geography, and FEMA claims, then makes the model assumptions and mistakes visible.
 
 ## Live demonstration: seventy seconds
 

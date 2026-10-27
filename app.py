@@ -116,6 +116,32 @@ st.markdown('<span class="badge">Research prototype · Historical replay</span>'
 st.caption('Research and education only. Not a commercial catastrophe model, live forecast, insurance quote, or emergency guidance.')
 
 briefing,portfolio,validation=st.tabs(['Storm briefing','Portfolio','Does it work?'])
+with portfolio:
+    # Recompute before the agent reads totals; removed or invalid uploads leave no stale evidence.
+    st.session_state.pop(f'portfolio-{sid}', None)
+    st.subheader('Which portfolio values are near this storm?')
+    st.write('Upload county totals or use a fictional sample. This calculation sums insured values inside the study corridor. It does not estimate portfolio losses.')
+    sample='county_fips,insured_value\n12071,2500000\n12103,1800000\n12057,1200000\n37119,900000\n'
+    st.download_button('Download fictional sample CSV',sample,file_name='fictional-portfolio.csv',mime='text/csv')
+    use_sample=st.checkbox('Use fictional sample portfolio',value=True)
+    uploaded=st.file_uploader('Your portfolio CSV',type=['csv'],disabled=use_sample)
+    st.caption('Required columns: county_fips and insured_value. County codes must contain five digits. Values must be finite and nonnegative. Uploads are processed in this app session. Only aggregate totals are shared with Nebius if you explicitly select that option in Storm briefing.')
+    if use_sample or uploaded is not None:
+        try:
+            text=sample if use_sample else uploaded.getvalue().decode('utf-8-sig')
+            p=read_portfolio(text,set(counties.county_fips))
+            if f.empty:
+                st.info('No counties are in this storm corridor; no uploaded value is classified as near the track.')
+            else:
+                exposure,total=portfolio_exposure(p,f)
+                st.session_state[f'portfolio-{sid}']={'total_value':float(p.insured_value.sum()),'corridor_value':total,'fictional_sample':use_sample,'note':'Insured value near track, not an estimated loss.'}
+                x,y,z=st.columns(3);x.metric('Total uploaded value',money(p.insured_value.sum()));y.metric('Value in corridor',money(total));z.metric('Counties in corridor',int(exposure.in_corridor.sum()))
+                st.dataframe(exposure[['county_fips','county','state','insured_value','min_distance_km','in_corridor']],hide_index=True,width='stretch')
+                st.download_button('Download exposure calculation',exposure.to_csv(index=False),file_name=f'{sid}-portfolio-corridor.csv',mime='text/csv')
+                st.warning('Outside the corridor does not mean safe. Flooding can occur far from a track. County aggregate claims cannot be scaled into portfolio losses without a defensible insured exposure denominator.')
+        except (ValueError,UnicodeError) as error: st.error(str(error))
+
+
 with briefing:
     st.subheader(f'{name} · {year}')
     st.caption(f'{sid}  |  {status}  |  {track.time_utc.min():%d %b %Y} to {track.time_utc.max():%d %b %Y} UTC')
@@ -202,28 +228,6 @@ with briefing:
             st.markdown(f'**{title}**');st.write(output['narrative'][field])
         with st.expander('Agent tool trace'): st.json({'model':output['model'],'tools':output['tools'],'evidence':output['evidence']})
 
-with portfolio:
-    st.subheader('Which portfolio values are near this storm?')
-    st.write('Upload county totals or use a fictional sample. This calculation sums insured values inside the study corridor. It does not estimate portfolio losses.')
-    sample='county_fips,insured_value\n12071,2500000\n12103,1800000\n12057,1200000\n37119,900000\n'
-    st.download_button('Download fictional sample CSV',sample,file_name='fictional-portfolio.csv',mime='text/csv')
-    use_sample=st.checkbox('Use fictional sample portfolio',value=True)
-    uploaded=st.file_uploader('Your portfolio CSV',type=['csv'],disabled=use_sample)
-    st.caption('Required columns: county_fips and insured_value. County codes must contain five digits. Values must be finite and nonnegative. Uploads are processed in this app session. Only aggregate totals are shared with Nebius if you explicitly select that option in Storm briefing.')
-    if use_sample or uploaded is not None:
-        try:
-            text=sample if use_sample else uploaded.getvalue().decode('utf-8-sig')
-            p=read_portfolio(text,set(counties.county_fips))
-            if f.empty:
-                st.info('No counties are in this storm corridor; no uploaded value is classified as near the track.')
-            else:
-                exposure,total=portfolio_exposure(p,f)
-                st.session_state[f'portfolio-{sid}']={'total_value':float(p.insured_value.sum()),'corridor_value':total,'fictional_sample':use_sample,'note':'Insured value near track, not an estimated loss.'}
-                x,y,z=st.columns(3);x.metric('Total uploaded value',money(p.insured_value.sum()));y.metric('Value in corridor',money(total));z.metric('Counties in corridor',int(exposure.in_corridor.sum()))
-                st.dataframe(exposure[['county_fips','county','state','insured_value','min_distance_km','in_corridor']],hide_index=True,width='stretch')
-                st.download_button('Download exposure calculation',exposure.to_csv(index=False),file_name=f'{sid}-portfolio-corridor.csv',mime='text/csv')
-                st.warning('Outside the corridor does not mean safe. Flooding can occur far from a track. County aggregate claims cannot be scaled into portfolio losses without a defensible insured exposure denominator.')
-        except (ValueError,UnicodeError) as error: st.error(str(error))
 
 with validation:
     st.subheader('Trust the evidence. Inspect the misses.')
@@ -255,4 +259,4 @@ with validation:
     st.divider()
     st.markdown('**Source ledger**')
     st.markdown('[NOAA HURDAT2](https://www.nhc.noaa.gov/data/#hurdat) · [OpenFEMA NFIP v3](https://www.fema.gov/openfema-data-page/nfip-redacted-claims-v3) · [Census Gazetteer](https://www.census.gov/geographies/reference-files/2025/geo/gazetter-file.html) · [FEMA NRI](https://www.arcgis.com/home/item.html?id=39485e8035d446a5bff03259508ae355)')
-    st.caption('NOAA: 1851–2025 release. Census: 2025 county internal points. NRI: December 2025. Claims: API retrieval timestamps are recorded in the source manifest. Research snapshot downloaded October 27, 2026.')
+    st.caption('NOAA: 1851 through 2025 release. Census: 2025 county internal points. NRI: December 2025. Claims: API retrieval timestamps are recorded in the source manifest. Research snapshot downloaded October 27, 2026.')
