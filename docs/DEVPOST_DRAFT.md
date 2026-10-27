@@ -28,7 +28,7 @@ Python, Streamlit, pandas, scikit-learn, and pydeck. The data comes from NOAA HU
 
 Sixteen storms from 2011 through 2024 were split before any fitting: eight for training, three for calibration, and five held out for the final test. Poisson gradient boosting is compared with a mean baseline and selected on calibration error. Ranges come from the 90th percentile of calibration errors.
 
-The agent uses a JSON tool plan checked against an allowlist. Tools are bound to the selected storm, so the model cannot choose files, URLs, or code. Replies are unwrapped from reasoning text before validation. The public app limits AI calls per visit and per day to protect credits. Twenty six automated tests run on every push through GitHub Actions.
+The agent uses a JSON tool plan checked against an allowlist. Tools are bound to the selected storm, so the model cannot choose files, URLs, or code. Replies are unwrapped from reasoning text before validation. The public app limits AI calls per visit and per day to protect credits. Twenty nine automated tests run on every push through GitHub Actions.
 
 ## Challenges I ran into
 

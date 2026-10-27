@@ -26,3 +26,11 @@ def test_extract_json_ignores_reasoning_and_fences():
     assert extract_json('reasoning only</think>{"a": "b"}') == '{"a": "b"}'
     with pytest.raises(ValueError):
         extract_json('no json here')
+
+
+def test_rejected_prose_names_the_disallowed_tokens():
+    from src.stormsight.agent import disallowed_tokens
+    assert disallowed_tokens('Milton in 2024 was one of the storms, see www.example.com') == ['2024', 'one', 'www.example.com']
+    assert disallowed_tokens('Estimates are proxies, not verified causation.') == []
+    with pytest.raises(ValueError, match='2024'):
+        validate_narrative('{"summary":"Milton in 2024","uncertainties":"x","watch_next":"y"}', {})
