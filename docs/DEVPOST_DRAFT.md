@@ -46,14 +46,14 @@ Add rainfall and surge evidence, historical policy exposure, and a broader storm
 
 ## Built with
 
-Python, Streamlit, pandas, NumPy, scikit-learn, pydeck, NOAA HURDAT2, OpenFEMA, Census Gazetteer, FEMA NRI. Add Nebius Token Factory, NVIDIA Nemotron, and Tavily as functioning integrations only after recording successful runtime calls.
+Python, Streamlit, pandas, NumPy, scikit-learn, pydeck, NVIDIA Nemotron 3 Super, Nebius Token Factory, NOAA HURDAT2, OpenFEMA, Census Gazetteer, FEMA NRI. Add Tavily only after a successful live lookup.
 
 ## Remaining submission fields
 
 1. Public repository URL: pending publication.
 2. Hosted application URL: pending deployment.
 3. Public YouTube video URL: pending recording, under three minutes.
-4. Exact NVIDIA model identifier: pending dashboard verification.
+4. Exact NVIDIA model identifier: nvidia/nemotron-3-super-120b-a12b, verified with a live briefing on October 27, 2026.
 5. Nebius feedback: record actual onboarding and runtime observations after the live test. Do not invent speed, quality, or cost comparisons.
 6. Track: Best Apps and Agents.
 

@@ -9,7 +9,10 @@ def select(app, label):
     return next(widget for widget in app.selectbox if widget.label == label)
 
 
-def test_dashboard_storm_switching_and_validation():
+def test_dashboard_storm_switching_and_validation(monkeypatch):
+    # A developer's private .env must not change this test: empty values are not overridden by load_dotenv.
+    for name in ['NEBIUS_API_KEY', 'NEBIUS_BASE_URL', 'NEBIUS_MODEL', 'TAVILY_API_KEY']:
+        monkeypatch.setenv(name, '')
     app = AppTest.from_file(APP, default_timeout=60).run()
     assert not app.exception
     assert [tab.label for tab in app.tabs] == ['Storm briefing', 'Portfolio', 'Does it work?']
@@ -28,4 +31,5 @@ def test_removed_portfolio_cannot_be_sent_as_stale_evidence():
     assert app.session_state['portfolio-AL092024']['fictional_sample']
     next(c for c in app.checkbox if c.label == 'Use fictional sample portfolio').uncheck().run()
     assert not app.exception
-    assert 'portfolio-AL092024' not in app.session_state.filtered_state
+    # Streamlit 1.66 AppTest membership checks the tester facing session state.
+    assert 'portfolio-AL092024' not in app.session_state

@@ -17,3 +17,12 @@ def test_prose_cannot_override_evidence_numbers():
 def test_missing_config_never_calls_network():
     with pytest.raises(ValueError,match='Set the Nebius'):
         generate_briefing({}, {})
+
+
+def test_extract_json_ignores_reasoning_and_fences():
+    from src.stormsight.agent import extract_json
+    assert extract_json('{"tools": ["list_storms"]}') == '{"tools": ["list_storms"]}'
+    assert extract_json('<think>pick tools</think>\n```json\n{"tools": []}\n```') == '{"tools": []}'
+    assert extract_json('reasoning only</think>{"a": "b"}') == '{"a": "b"}'
+    with pytest.raises(ValueError):
+        extract_json('no json here')

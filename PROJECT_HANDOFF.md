@@ -158,3 +158,12 @@ Remaining steps, in order, before October 30, 2026 at 1 PM EDT:
 5. Deploy on Streamlit Community Cloud with the keys in the app Secrets panel, not in the repository.
 6. Record the YouTube video under three minutes from docs/DEMO_SCRIPT.md and set it to public, as the rules require.
 7. Fill the Devpost fields with the real URLs, model ID, and honest Nebius feedback, then submit.
+
+Checkpoint 318b13f saved through GitHub Desktop on October 27: all 9 reviewed files committed, working tree clean, no keys or private files in any commit. The repository is not yet published to GitHub; the user is deciding on public visibility. The full suite, including tests/test_app.py, still needs one run on the Mac or through GitHub Actions after publishing.
+
+Agent hardening, October 27: Nemotron 3 Super is a reasoning model, so `generate_briefing` now extracts the JSON object from each reply (ignoring think tags and code fences), allows 4,096 output tokens, and waits up to 90 seconds. Added a test for the extractor; 24 non interface tests pass, so the full suite should report 26 passed on the Mac. Created a private, Git ignored `.env` with NEBIUS_BASE_URL=https://api.tokenfactory.nebius.com/v1/ (shown in the user's Token Factory dashboard) and NEBIUS_MODEL=nvidia/nemotron-3-super-120b-a12b (published by Nebius; confirm it in the model catalog). The user must paste NEBIUS_API_KEY himself. No live call has been made yet.
+
+Usage limits, October 27: the hosted app now allows three Nemotron briefings and three Tavily lookups per visit, with an app wide daily cap from DAILY_AI_LIMIT (default 100). A portfolio free briefing is reused for the same storm and labelled as reused. The sidebar shows the configured model ID. tests/test_app.py now clears the Nebius and Tavily variables so a private .env cannot change the result.
+
+
+Live verification, October 27 at about 12:10 PM EDT: the user saved his own Nebius key in `.env`. The full suite reported 25 passed and 1 failed; the failure was `app.session_state.filtered_state`, which Streamlit 1.66 AppTest no longer exposes, so the test now uses `in app.session_state`. The app started locally and a Helene briefing from `nvidia/nemotron-3-super-120b-a12b` returned with all prose checks passing. The Nebius account has the $25 Builder Program credit applied. Remaining: commit, publish, Streamlit Cloud deployment, optional Tavily key, video, Devpost.

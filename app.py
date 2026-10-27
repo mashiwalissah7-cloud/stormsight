@@ -62,6 +62,29 @@ def secret(name):
         except Exception: pass
     return str(value)
 
+SESSION_LIMIT=3
+LIMIT_NOTE='The AI usage limit for this visit or for today has been reached. All evidence tables remain available.'
+
+@st.cache_resource
+def usage_tracker():
+    import threading
+    return {'lock':threading.Lock(),'day':'','counts':{},'briefings':{}}
+
+def daily_limit():
+    try: return max(0,int(secret('DAILY_AI_LIMIT') or 100))
+    except ValueError: return 100
+
+def reserve(kind):
+    """Allow a paid API call only within the per visit and app wide daily limits."""
+    used=st.session_state.get(f'{kind}-used',0)
+    usage=usage_tracker(); today=pd.Timestamp.now(tz='UTC').strftime('%Y-%m-%d')
+    with usage['lock']:
+        if usage['day']!=today: usage.update(day=today,counts={},briefings={})
+        if used>=SESSION_LIMIT or usage['counts'].get(kind,0)>=daily_limit(): return False
+        usage['counts'][kind]=usage['counts'].get(kind,0)+1
+    st.session_state[f'{kind}-used']=used+1
+    return True
+
 def money(value): return f'${value:,.0f}'
 
 def safe_records(frame): return json.loads(frame.to_json(orient='records',date_format='iso'))
@@ -94,7 +117,7 @@ with st.sidebar:
     config={key:secret(key) for key in ['NEBIUS_API_KEY','NEBIUS_BASE_URL','NEBIUS_MODEL']}
     nebius_ready=all(config.values()); tavily_key=secret('TAVILY_API_KEY')
     st.caption('NEBIUS CONNECTION')
-    st.write('Configuration present; live call not yet verified' if nebius_ready else 'Not connected')
+    st.write(f"Model: {config['NEBIUS_MODEL']}" if nebius_ready else 'Not connected')
     st.caption('Tavily lookup available' if tavily_key else 'Tavily not connected')
     st.markdown('[NOAA tracks](https://www.nhc.noaa.gov/data/#hurdat) · [FEMA claims](https://www.fema.gov/openfema-data-page/nfip-redacted-claims-v3)')
 
@@ -204,13 +227,19 @@ with briefing:
     st.write('What to watch: compare county estimates with the held out results before interpreting any totals. For current hazards, consult official NHC and local emergency guidance.')
     news_key=f'news-{sid}'
     if st.button('Look up official sources with Tavily',disabled=not bool(tavily_key)):
-        try:
-            with st.spinner('Looking up public official sources…'): st.session_state[news_key]=search_storm_news(name,year,tavily_key)
-        except Exception: st.error('Source lookup failed. Check your Tavily key and service availability. No results were invented.')
+        if not reserve('lookup'): st.warning(LIMIT_NOTE)
+        else:
+            try:
+                with st.spinner('Looking up public official sources…'): st.session_state[news_key]=search_storm_news(name,year,tavily_key)
+            except Exception: st.error('Source lookup failed. Check your Tavily key and service availability. No results were invented.')
     for item in st.session_state.get(news_key,[]): st.link_button(item['title'],item['url'])
     st.caption('Optional AI sends selected public storm and county evidence to your configured Nebius endpoint.')
     include_portfolio=st.checkbox('Include portfolio totals in the Nebius briefing',value=False,help='If selected, only aggregate uploaded value and corridor value from the Portfolio tab will be sent to Nebius. Individual rows are not sent.')
-    if st.button('Generate Nemotron briefing',type='primary',disabled=not(nebius_ready and model_ready and not results.empty)):
+    clicked=st.button('Generate Nemotron briefing',type='primary',disabled=not(nebius_ready and model_ready and not results.empty))
+    shared=None if include_portfolio else usage_tracker()['briefings'].get(sid)
+    if clicked and shared: st.session_state[f'ai-{sid}']={**shared,'shared':True}
+    elif clicked and not reserve('briefing'): st.warning(LIMIT_NOTE)
+    elif clicked:
         tools={
             'list_storms':lambda:safe_records(storms),
             'get_storm_track':lambda:{'storm':name,'year':int(year),'storm_id':sid,'peak_wind_knots':float(wind),'positions':len(track),'source':SOURCE_URL},
@@ -220,10 +249,14 @@ with briefing:
             tools['portfolio_exposure']=lambda:st.session_state[f'portfolio-{sid}']
         if tavily_key: tools['search_storm_news']=lambda:search_storm_news(name,year,tavily_key)
         try:
-            with st.spinner('Running evidence tools and checking the briefing…'): st.session_state[f'ai-{sid}']=generate_briefing(config,tools)
+            with st.spinner('Running evidence tools and checking the briefing…'): briefing=generate_briefing(config,tools)
+            st.session_state[f'ai-{sid}']=briefing
+            # Portfolio free briefings use only public evidence, so one result per storm is reused to limit API use.
+            if not include_portfolio: usage_tracker()['briefings'][sid]=briefing
         except ValueError as error: st.error(str(error))
     if f'ai-{sid}' in st.session_state:
         output=st.session_state[f'ai-{sid}']; st.success('Nemotron response received and numerical prose checks passed.')
+        if output.get('shared'): st.caption('This briefing was generated earlier for this storm and is reused to limit API use.')
         for field,title in [('summary','Summary'),('uncertainties','Key uncertainties'),('watch_next','What to watch')]:
             st.markdown(f'**{title}**');st.write(output['narrative'][field])
         with st.expander('Agent tool trace'): st.json({'model':output['model'],'tools':output['tools'],'evidence':output['evidence']})

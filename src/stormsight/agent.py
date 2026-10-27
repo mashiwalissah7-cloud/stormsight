@@ -9,6 +9,18 @@ NUMBER=re.compile(r'(?<![A-Za-z])[-+]?\d[\d,]*(?:\.\d+)?%?')
 NUMBER_WORDS=re.compile(r'\b(zero|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety|dozen|half|quarter|hundred|thousand|million|billion|trillion)\b',re.I)
 
 
+THINK=re.compile(r'<think>.*?</think>',re.S)
+
+
+def extract_json(text):
+    """Return the JSON object in a reply, ignoring reasoning tags and code fences."""
+    text=THINK.sub('',text or '')
+    if '</think>' in text: text=text.split('</think>')[-1]
+    start=text.find('{'); end=text.rfind('}')
+    if start<0 or end<start: raise ValueError('The model reply did not contain a JSON object.')
+    return text[start:end+1]
+
+
 def validate_numbers(text, evidence):
     """Reject numerical tokens absent from evidence. Not a semantic truth proof."""
     allowed=set(NUMBER.findall(json.dumps(evidence,default=str)))
@@ -53,10 +65,11 @@ def generate_briefing(config, tool_functions):
     url=urlparse(base); host=url.hostname or ''
     if url.scheme!='https' or url.username or url.password or not any(host==d or host.endswith('.'+d) for d in ['nebius.com','nebius.ai']):
         raise ValueError('Use an HTTPS endpoint from your Nebius dashboard.')
-    client=OpenAI(api_key=key,base_url=base,timeout=45,max_retries=1)
+    client=OpenAI(api_key=key,base_url=base,timeout=90,max_retries=1)
     def call(messages):
-        response=client.chat.completions.create(model=model,messages=messages,temperature=0,max_tokens=1600)
-        return response.choices[0].message.content or ''
+        # Reasoning models can spend tokens before the answer, so leave room for the JSON.
+        response=client.chat.completions.create(model=model,messages=messages,temperature=0,max_tokens=4096)
+        return extract_json(response.choices[0].message.content or '')
     try:
         plan_text=call([{'role':'system','content':'Return only JSON with a tools array containing tool names. Select public evidence tools for a historical hurricane research briefing. Never invent tools.'},
                         {'role':'user','content':json.dumps({'available_tools':list(tool_functions)})}])
@@ -73,5 +86,8 @@ def generate_briefing(config, tool_functions):
                 if attempt: raise ValueError('The generated briefing failed its evidence checks. No AI text was displayed.')
                 messages += [{'role':'assistant','content':text},{'role':'user','content':'Rewrite the JSON. Remove every number and number word. Use only the required qualitative fields.'}]
     except ValueError: raise
-    except Exception:
-        raise ValueError('Nebius request failed. Check the endpoint, model, credits, and key locally. No AI briefing was saved.') from None
+    except Exception as error:
+        # Report only the error type and HTTP status, never the request or key.
+        status=getattr(error,'status_code',None)
+        detail=type(error).__name__+(f', HTTP {status}' if status else '')
+        raise ValueError(f'Nebius request failed ({detail}). Check the endpoint, model, credits, and key locally. No AI briefing was saved.') from None
