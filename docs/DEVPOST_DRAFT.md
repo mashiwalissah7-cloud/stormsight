@@ -56,7 +56,7 @@ python, streamlit, pandas, numpy, scikit-learn, pydeck, nvidia-nemotron, nebius-
 
 1. Live app: https://stormsight-hurricane.streamlit.app/
 2. Code: https://github.com/mashiwalissah7-cloud/stormsight
-3. Video: add the public YouTube link after recording.
+3. Video: https://youtu.be/GSQdjodEvrk
 
 ## Model and track
 

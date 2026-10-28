@@ -4,9 +4,29 @@
 
 StormSight helps students and researchers connect an observed hurricane track with county flood insurance claims, inspect a small predictive model, and see its largest mistakes.
 
-**Working locally:** historical maps, county estimates, portfolio corridor screening, data provenance, and a benchmark on five unseen storms. **Verified live on October 27, 2026:** an NVIDIA Nemotron 3 Super briefing (`nvidia/nemotron-3-super-120b-a12b`) through Nebius Token Factory, with every prose check passing. The public app at https://stormsight-hurricane.streamlit.app/ ran the same live briefing successfully. **Still required for the hackathon:** the final demonstration video. The Tavily lookup is implemented but has not yet been tested with a live key.
+**Working locally:** historical maps, county estimates, portfolio corridor screening, data provenance, and a benchmark on five unseen storms. **Verified live on October 27, 2026:** an NVIDIA Nemotron 3 Super briefing (`nvidia/nemotron-3-super-120b-a12b`) through Nebius Token Factory, with every prose check passing. The public app at https://stormsight-hurricane.streamlit.app/ ran the same live briefing successfully. **Demo video:** https://youtu.be/GSQdjodEvrk. The optional Tavily lookup is implemented but has not been tested with a live key.
 
 This is a research prototype. It is not a live forecast, commercial catastrophe model, insurance quote, or emergency guidance.
+
+## How StormSight uses NVIDIA Nemotron and Nebius Token Factory
+
+**Model:** NVIDIA Nemotron 3 Super, `nvidia/nemotron-3-super-120b-a12b`, served by Nebius Token Factory through its OpenAI compatible endpoint `https://api.tokenfactory.nebius.com/v1/`.
+
+**What Nemotron does in the app**
+
+1. **Plans.** When a user clicks Generate Nemotron briefing, Nemotron returns a JSON plan choosing which evidence tools to call from a fixed allowlist (`get_storm_track`, `predict_county_losses`, `list_storms`, and optional portfolio and source tools). Tools are bound to the selected storm, so the model cannot choose files, URLs, or code.
+2. **Explains.** Python runs the chosen tools and renders every number and table. Nemotron then writes three qualitative fields: a summary, the key uncertainties, and what to watch.
+3. **Is checked.** Any digit, number word, or link in the prose is rejected and sent back with the exact reason, for up to three attempts. Replies that wrap JSON in reasoning tags or code fences are unwrapped first. The full tool trace, including the model ID, is shown in the app.
+
+Code: `src/stormsight/agent.py` (`generate_briefing`) and the briefing section of `app.py`.
+
+**Where Token Factory helped**
+
+- No GPU or model hosting was needed. The standard `openai` Python client worked by changing only the base URL and model ID, so the agent was running within minutes of creating a key.
+- The hosted app calls Token Factory directly from Streamlit Community Cloud, with the key stored in Streamlit Secrets, never in the repository.
+- Pay per token billing, funded by Nebius Builder Program credits, made it practical to offer live briefings to judges. The app caps use at three briefings per visit and 100 per day, and reuses a briefing for the same storm.
+
+Live briefings for Helene, Milton, Ian, and Idalia passed every check on October 27, 2026; Helene was run both locally and on the hosted app, the others on the hosted app. No other Nebius services are used. Hosting is Streamlit Community Cloud, and tests run on GitHub Actions.
 
 ## Try the app
 
@@ -82,7 +102,7 @@ Portfolio CSV files require exactly `county_fips` and `insured_value`. Values mu
 
 Portfolio value within the corridor is a geographic screen. It is not predicted damage and cannot be obtained by scaling county claims without an appropriate exposure denominator.
 
-The optional Nemotron agent uses a validated JSON tool plan. Python runs tools bound to the selected storm and renders all numerical evidence. Generated prose must use the required qualitative fields and cannot contain numerical quantities or URLs. Invalid prose is retried once, then rejected. These checks do not prove semantic accuracy. A live Helene briefing from `nvidia/nemotron-3-super-120b-a12b` passed them on October 27, 2026. The agent does not rely on native function calling, and replies that wrap JSON in reasoning tags or code fences are unwrapped before validation.
+The optional Nemotron agent uses a validated JSON tool plan. Python runs tools bound to the selected storm and renders all numerical evidence. Generated prose must use the required qualitative fields and cannot contain numerical quantities or URLs. Rejected prose is sent back to the model with the exact reason, for up to three attempts in total; if all fail, no AI text is shown. These checks do not prove semantic accuracy. A live Helene briefing from `nvidia/nemotron-3-super-120b-a12b` passed them on October 27, 2026. The agent does not rely on native function calling, and replies that wrap JSON in reasoning tags or code fences are unwrapped before validation.
 
 The default summary is explicitly produced by Python. It is never presented as an AI response. Optional Tavily queries use the selected storm name and year and return links only from official NHC, FEMA, or weather.gov domains. Only if the user opts in are aggregate portfolio totals included in a Nebius request. Individual portfolio rows are not sent to Nebius. To protect API credits, each visit is limited to three AI briefings and three source lookups, and the whole app has a daily cap set by `DAILY_AI_LIMIT` (default 100). A briefing without portfolio data is reused for the same storm.
 
